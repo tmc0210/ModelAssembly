@@ -11,6 +11,10 @@ public class AssambleObject : MonoBehaviour
 
     public Transform TAssambleObject;
 
+    private Transform[] targetMark;
+
+    public float minAssambleDistance = 10f;
+
     // Use this for initialization
     void Start()
     {
@@ -19,26 +23,52 @@ public class AssambleObject : MonoBehaviour
         {
             Debug.LogError("本地对象未找到位置标志");
         }
-
-        tMark = TAssambleObject.Find("LocationMark");
-        if (tMark == null)
-        {
-            Debug.LogError("目标对象未找到位置标志");
-        }
-
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        tMark = null;
+    }
+
+    private void FindTarget()
+    {
+        targetMark = TAssambleObject.gameObject.GetComponentsInChildren<Transform>();
+
+        float tmp1 = minAssambleDistance;
+
+        foreach (Transform childTransform in targetMark)
         {
-            MoveToTarget();
+            if (childTransform.gameObject.GetComponent<TailLocationMark>())
+            {
+                if (childTransform.gameObject.GetComponent<TailLocationMark>().tMark == null)
+                {
+                    float tmp2 = (childTransform.position - mMark.transform.position).magnitude;
+                    if (tmp2 < tmp1)
+                    {
+
+                        tmp1 = tmp2;
+                        tMark = childTransform;
+                    }
+                }
+                else
+                {
+                    Debug.Log(childTransform.gameObject.name + "is not free");
+                }
+            }
+        }
+
+        //tMark = TAssambleObject.Find("LocationMark");
+
+        if (tMark == null)
+        {
+            Debug.Log("目标对象未找到位置标志,可能距离过远或tail的所有空位已满");
         }
     }
 
 
     int j = 0;
+
     private void MoveToTarget()
     {
 
@@ -56,9 +86,27 @@ public class AssambleObject : MonoBehaviour
             j++;
             if (Angle == 0 && moveVector == Vector3.zero)
             {
+                tMark.gameObject.GetComponent<TailLocationMark>().tMark = mMark.gameObject;
+                mMark.gameObject.GetComponent<HeadLocationMark>().tMark = tMark.gameObject;
                 Debug.Log("进行了多少次数：" + j);//发现一次不是能达到目标，所以重复几次
                 break;
             }
+        }
+    }
+
+    public void FindTargetAndMove()
+    {
+        if (mMark.gameObject.GetComponent<HeadLocationMark>().tMark == null)
+        {
+            FindTarget();
+        }
+        else
+        {
+            tMark = null;
+        }
+        if (tMark != null)
+        {
+            MoveToTarget();
         }
     }
 }

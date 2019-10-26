@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct DoorPoint
+public struct HeadDoorPoint
 {
     public Vector3 top_left;
     public Vector3 top_right;
@@ -10,14 +10,17 @@ public struct DoorPoint
     public Vector3 buttom_right;
 }
 
-public class LocationMark : MonoBehaviour {
+public class HeadLocationMark : MonoBehaviour {
 
     public Vector2 Size;
-    DoorPoint m_point;
+    HeadDoorPoint m_point;
+    public GameObject tMark;
 
     private Vector3 m_postion;
     private Vector3 m_rotation;
+
     // Use this for initialization
+
     void Start()
     {
 
