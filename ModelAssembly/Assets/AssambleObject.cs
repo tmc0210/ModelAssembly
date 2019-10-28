@@ -88,10 +88,10 @@ public class AssambleObject : MonoBehaviour
             {
                 tMark.gameObject.GetComponent<TailLocationMark>().tMark = mMark.gameObject;
                 mMark.gameObject.GetComponent<HeadLocationMark>().tMark = tMark.gameObject;
-                Debug.Log("进行了多少次数：" + j);//发现一次不是能达到目标，所以重复几次
                 break;
             }
         }
+        gameObject.transform.parent = tMark.parent.transform.parent;  //成为watchhead的子物体而非tail的子物体
     }
 
     public void FindTargetAndMove()
